@@ -8,7 +8,15 @@ var whitelist = [
 
 var query_filter = whitelist.map(function(obj, i){return "site:" + obj.link}).join(' OR ')
 
+function buildSearchOption(obj, target) {
+  var target = $('body #whitelist')
+  target.append("<label>"  +  obj.name + "<input type='checkbox' checked></label>")
+}
+
 $(document).ready(function(){
-  // $('body').append(Object.keys(whitelist))
+  
+
+  whitelist.forEach(buildSearchOption)
+  
   $('input').val( )
 })

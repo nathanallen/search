@@ -1,8 +1,33 @@
 body {
-  margin: 10vh 10vw;
+  margin: 4vh 12vw;
 }
 
-input {
+input#search {
   font-size: 3em;
   width: 100%;
+  margin-bottom: 2vh;
+}
+
+#whitelist label {
+  display: block;
+  font-size: 1.25em;
+  padding: 2vh 0;
+  border: 1px dotted transparent;
+}
+
+#whitelist label + label {
+  border-top: 1px dotted lightgray;
+}
+
+#whitelist label:hover {
+  border: 1px dotted lightgray;
+  background-color: lightgray;
+}
+
+#whitelist label:active {
+  border: 1px solid gray;
+}
+
+#whitelist input {
+  float: right;
 }
