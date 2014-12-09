@@ -8,8 +8,14 @@
   </head>
 
   <body>
-    <input type="text" id="search" placeholder="Search MDN, Stack Overflow, and more" autofocus>
-    <div id="whitelist"></div>
+    <form>
+      <input name="q" type="text" id="search" placeholder="Search MDN, Stack Overflow, and more" autofocus autocomplete='off'>
+      <div id="collapse">
+        <div id="whitelist"></div>
+        <input type='submit' value="Search">
+      </div>
+    </form>
+    <div id='search-results-target'></div>
   </body>
 
   <script>

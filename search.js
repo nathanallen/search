@@ -6,17 +6,24 @@ var whitelist = [
   {name: "A List Apart", link: "alistapart.com"},
 ]
 
-var query_filter = whitelist.map(function(obj, i){return "site:" + obj.link}).join(' OR ')
-
-function buildSearchOption(obj, target) {
-  var target = $('body #whitelist')
-  target.append("<label>"  +  obj.name + "<input type='checkbox' checked></label>")
-}
-
 $(document).ready(function(){
-  
+  var target = $('body #whitelist')
+
+  function buildSearchOption(obj) {
+    target.append("<label>" + obj.name + "<input name='site' type='checkbox' value='" + obj.link + "' checked></label>")
+  }
 
   whitelist.forEach(buildSearchOption)
+
+  $('form').submit(function(){
+    var query_str = $(this).serialize(), // e.g. "q=dom&site=developer.mozilla.org&site=stackoverflow.com"
+        my_query = query_str.slice(2)
+                            .replace(/&/, '+') // replace first ampersand with a space;
+                            .replace(/&/g, '+OR+') // the rest are seperated by 'OR'
+                            .replace(/=/g, ':')
+    $('body #search-results-target').html("<iframe src='" + "https://duckduckgo.com/?q=" + my_query +"'>")
+    $('form #collapse').hide()
+    return false
+  })
   
-  $('input').val( )
 })
