@@ -3,7 +3,11 @@ body {
 }
 
 form {
- margin: 4vh 12vw;
+ margin: 4vh 12vw 0;
+}
+
+ul {
+  margin: 0;
 }
 
 input#search {

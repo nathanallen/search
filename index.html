@@ -10,8 +10,11 @@
   <body>
     <form>
       <input name="q" type="text" id="search" placeholder="Search MDN, Stack Overflow, and more" autofocus autocomplete='off'>
-      <div id="suggestions" hidden><h3>Hint:</h3></div>
-      <div id="collapse">
+      <div id="suggestions-container" hidden>
+        <!-- <h3>Hint:</h3> -->
+        <ul id="suggestions"></ul>
+      </div>
+      <div id="whitelist-container">
         <div id="whitelist"></div>
         <input type='submit' value="Search">
       </div>

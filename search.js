@@ -13,43 +13,69 @@ var languages = [ 'javascript', 'jquery', 'css', 'html', 'ruby', 'python' ],
     descriptors = [ 'property', 'attribute', 'selector', 'element', 'tag',
                     'method', 'function', 'api' ]
 
-function any_matching_search_terms(search_terms) {
+function anyMatchingSearchTerms(search_terms, match_terms) {
   return search_terms.some(function(term){
-            return languages.some(function(lang){
-                return term.indexOf(lang) !== -1
+            return match_terms.some(function(match){
+                return term.indexOf(match) !== -1
             })
   })
 }
 
-$(document).ready(function(){
-  var target = $('body #whitelist')
-
-  function buildSearchOption(obj) {
-    target.append("<label>" + obj.name + "<input name='site' type='checkbox' value='" + obj.link + "' checked></label>")
+function makeSearchSuggestions(search_terms, $container, $target) {
+  $target.html('')
+  if ( !anyMatchingSearchTerms(search_terms, languages) ) {
+    $container.show()
+    $target.append("<li>Consider narrowing the scope of your search by specifying a language (e.g. javascript, css, html).</li>")
   }
+  if ( !anyMatchingSearchTerms(search_terms, descriptors) ) {
+    $container.show()
+    $target.append('<li>Use domain specific descriptors like "html /tag/", "css /selector/", "javascript /method/".</li>')
+  }
+}
 
-  whitelist.forEach(buildSearchOption)
+function buildQuery(search_terms, $whitelist_selections) {
+  var whitelist_filter = $.makeArray($whitelist_selections.map(function(){return 'site:' + this.value})),
+      query = search_terms.join('+') + "+" + whitelist_filter.join('+OR+')
+  return query
+}
 
-  $('form').submit(function(){
-    var checked_sites = $('form #whitelist input:checked').map(function(){return this.value}),
-        search_terms = $('form input#search').val().toLowerCase().split(' ')
-    console.log(search_terms)
-    if ( !any_matching_search_terms(search_terms, languages) ) {
-      $('form #suggestions').show()
-                            .append("<p>- Consider narrowing the scope of your search by specifying a language (e.g. javascript, css, html).</p>")
-    }
-    if ( !any_matching_search_terms(search_terms, descriptors) ) {
-      $('form #suggestions').show()
-                            .append('<p>- Use descriptors like "html /tag/", "css /selector/", "javascript /function/".</p>')
-    }
-    var query_str = $(this).serialize(), // e.g. "q=dom&site=developer.mozilla.org&site=stackoverflow.com"
-        my_query = query_str.slice(2)
-                            .replace(/&/, '+') // replace first ampersand with a space;
-                            .replace(/&/g, '+OR+') // the rest are seperated by 'OR'
-                            .replace(/=/g, ':')
-    $('body #search-results-target').html("<iframe src='" + "https://duckduckgo.com/?q=" + my_query +"'>")
-    $('form #collapse').hide()
-    return false
+function renderWhitelist(whitelist, $target) {
+  whitelist.forEach(function(opt){
+    $target.append("<label>" + opt.name + "<input name='site' type='checkbox' value='" + opt.link + "' checked></label>")
   })
-  
-})
+}
+
+function loadSearchResults(query, $target) {
+    $target.html("<iframe src='https://duckduckgo.com/?q=" + query +"'>")
+}
+
+function init() {
+  var $search_form = $('form'),
+      $whitelist_container = $search_form.find('#whitelist-container'),
+      $whitelist_target = $whitelist_container.find('#whitelist'),
+      $suggestions_container = $search_form.find('#suggestions-container'),
+      $suggestions_target = $suggestions_container.find('#suggestions'),
+      $search_results_target = $('#search-results-target'),
+      $search_input = $search_form.find('input#search')
+
+  renderWhitelist(whitelist, $whitelist_target)
+
+  $search_form.submit(function(e){
+      var search_terms =  $search_input.val().toLowerCase().split(' '),
+          query = buildQuery(search_terms, $whitelist_target.find('input:checked'))
+
+      makeSearchSuggestions(search_terms, $suggestions_container, $suggestions_target)
+
+      loadSearchResults(query, $search_results_target)
+
+      //collapse
+      $whitelist_container.hide()
+      $search_form.css('margin-top', 0)
+      $search_input.css('margin-bottom', 0)
+
+      return false
+  })
+
+}
+
+$(document).ready(init)
