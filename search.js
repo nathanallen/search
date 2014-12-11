@@ -72,6 +72,7 @@ function init() {
       $whitelist_container.hide()
       $search_form.css('margin-top', 0)
       $search_input.css('margin-bottom', 0)
+      $('#stupidity-msg').show()
 
       return false
   })
